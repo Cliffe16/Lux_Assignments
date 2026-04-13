@@ -1006,22 +1006,175 @@ HAVING SUM(s.quantity_sold) > (
 -- =====================================================
 
 -- 91. Which customers rank in the top 10% of spending?
+SELECT CONCAT(first_name, ' ' , last_name) AS full_name
+FROM 
+	(SELECT *, NTILE(10) OVER(ORDER BY SUM(s.total_amount) DESC) AS tiles
+	FROM "assignment".sales s
+		JOIN "assignment".customers c 
+			ON s.customer_id = c.customer_id 
+	GROUP BY c.customer_id, s.sale_id)
+WHERE tiles = 1,	
 
 -- 92. Which products contribute to the top 50% of total revenue?
+SELECT product_name
+FROM 
+	(SELECT *, NTILE(2) OVER(ORDER BY SUM(s.total_amount) DESC) AS tiles
+	FROM "assignment".sales s
+		JOIN "assignment".products p
+			ON s.product_id  = p.product_id 
+	GROUP BY p.product_id, s.sale_id)
+WHERE tiles = 1;	
 
 -- 93. Which customers made purchases in consecutive months?
+SELECT DISTINCT full_name
+FROM (
+	SELECT CONCAT(c.first_name, ' ' , c.last_name) AS full_name, DATE_TRUNC('month', s.sale_date) AS month, LEAD(DATE_TRUNC('month', s.sale_date)) OVER (PARTITION BY (s.customer_id) ORDER BY s.sale_date ) AS following_month
+	FROM sales s
+		JOIN customers c
+			ON s.customer_id = c.customer_id
+	)
+WHERE following_month = MONTH + INTERVAL '1 month';	
+/*DATE_TRUNC snaps all dates wihtin the month to the first; This is more efficient than using extract*/			
 
 -- 94. Which products experienced the largest difference between stock quantity and total quantity sold?
+SELECT product_name
+FROM
+	(SELECT p.product_name, NTILE(10) OVER(ORDER BY (SUM(p.stock_quantity) - SUM(s.quantity_sold))) AS tile
+	FROM products p
+		JOIN sales s
+			ON p.product_id = s.product_id
+	GROUP BY p.product_id)
+WHERE tile = 1 
+	OR tile = 2 
+	OR tile = 3;
 
 -- 95. Which customers have spending above the average spending of their membership tier?
+(SELECT CONCAT(c.first_name, ' ' , c.last_name) AS full_name, c.membership_status 
+FROM customers c
+	JOIN sales s
+		ON c.customer_id = s.customer_id 
+WHERE c.membership_status = 'Silver'				
+GROUP BY c.customer_id 
+HAVING SUM(s.total_amount) >(		
+	SELECT AVG(s.total_amount) AS avg_amt
+	FROM sales s
+		JOIN customers c
+			ON s.customer_id = c.customer_id
+	WHERE c.membership_status = 'Silver'		
+	GROUP BY c.membership_status))
+
+	UNION ALL
+	
+(SELECT CONCAT(c.first_name, ' ' , c.last_name) AS full_name, c.membership_status 
+FROM customers c
+	JOIN sales s
+		ON c.customer_id = s.customer_id 
+WHERE c.membership_status = 'Gold'				
+GROUP BY c.customer_id 
+HAVING SUM(s.total_amount) >(		
+	SELECT AVG(s.total_amount) AS avg_amt
+	FROM sales s
+		JOIN customers c
+			ON s.customer_id = c.customer_id
+	WHERE c.membership_status = 'Gold'		
+	GROUP BY c.membership_status))
+
+	UNION ALL
+	
+(SELECT CONCAT(c.first_name, ' ' , c.last_name), c.membership_status 
+FROM customers c
+	JOIN sales s
+		ON c.customer_id = s.customer_id 
+WHERE c.membership_status = 'Bronze'				
+GROUP BY c.customer_id 
+HAVING SUM(s.total_amount) >(		
+	SELECT AVG(s.total_amount) AS avg_amt
+	FROM sales s
+		JOIN customers c
+			ON s.customer_id = c.customer_id
+	WHERE c.membership_status = 'Bronze'		
+	GROUP BY c.membership_status)); 		
+
 
 -- 96. Which products have higher sales than the average sales within their category?
+(SELECT p.product_name, p.category  
+FROM products p
+	JOIN sales s
+		ON p.product_id = s.customer_id 
+WHERE p.category = 'Electronics'				
+GROUP BY p.product_id 
+HAVING SUM(s.total_amount) >(		
+	SELECT AVG(s.total_amount) AS avg_amt
+	FROM sales s
+		JOIN products p
+			ON p.product_id = s.product_id 
+	WHERE p.category  = 'Electronics'		
+	GROUP BY p.category ))
+
+	UNION ALL
+	
+(SELECT p.product_name, p.category  
+FROM products p
+	JOIN sales s
+		ON p.product_id = s.customer_id 
+WHERE p.category = 'Appliances'				
+GROUP BY p.product_id 
+HAVING SUM(s.total_amount) >(		
+	SELECT AVG(s.total_amount) AS avg_amt
+	FROM sales s
+		JOIN products p
+			ON p.product_id = s.product_id 
+	WHERE p.category  = 'Appliances'		
+	GROUP BY p.category ))
+
+	UNION ALL
+	
+(SELECT p.product_name, p.category  
+FROM products p
+	JOIN sales s
+		ON p.product_id = s.customer_id 
+WHERE p.category = 'Accessories'				
+GROUP BY p.product_id 
+HAVING SUM(s.total_amount) >(		
+	SELECT AVG(s.total_amount) AS avg_amt
+	FROM sales s
+		JOIN products p
+			ON p.product_id = s.product_id 
+	WHERE p.category  = 'Accessories'		
+	GROUP BY p.category )); 	
 
 -- 97. Which customer made the largest single purchase relative to their total spending?
+SELECT customer_id , SUM(total_amount) AS total_spent, NTILE(1) OVER (ORDER BY total_amount DESC) AS tile
+FROM sales
+GROUP BY customer_id, total_amount
 
 -- 98. Which products rank among the top 3 most sold products within each category?
+SELECT product_name
+FROM
+	(SELECT p.product_name, p.category, COUNT(s.sale_id) AS no_sales, RANK() OVER (PARTITION BY category ORDER BY COUNT(s.sale_id) DESC ) AS RANK
+	FROM products p
+		JOIN sales s
+			ON p.product_id = s.product_id 
+	GROUP BY p.category, p.product_id )
+WHERE RANK <=3;
 
 -- 99. Which customers are tied for the highest total spending?
+SELECT CONCAT(c.first_name, ' ' , c.last_name), SUM(s.total_amount) AS total_spent
+FROM customers c
+	JOIN sales s
+		ON c.customer_id = s.customer_id 
+GROUP BY c.customer_id 	
+ORDER BY SUM(s.total_amount) DESC
+LIMIT 2;
 
 -- 100. Which products generated sales every year present in the dataset?
+SELECT p.product_name
+FROM products p
+	JOIN sales s 
+		ON p.product_id = s.product_id
+GROUP BY p.product_id
+HAVING COUNT(DISTINCT EXTRACT(YEAR FROM s.sale_date)) = (
+    SELECT COUNT(DISTINCT EXTRACT(YEAR FROM sale_date)) 
+    FROM sales
+);
 
