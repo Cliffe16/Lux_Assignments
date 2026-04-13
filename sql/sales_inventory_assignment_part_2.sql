@@ -175,7 +175,7 @@ SELECT * FROM assignment.Inventory;
 -- 1. Write a query to select all data from the `Customers` table.
 SELECT * FROM assignment.customers;
 -- 2. Write a query to select the total number of products from the `Products` table.
-SELECT * FROM assignment.customers;
+SELECT * FROM assignment.products;
 
 -- 3. Write a query to select the product name and its price from the `Products` table where the price is greater than 500.
 SELECT product_name, price FROM "assignment".products WHERE price > 500;
@@ -216,11 +216,13 @@ GROUP BY p.product_id;
 SELECT price AS lowest_price FROM "assignment".products ORDER BY price ASC LIMIT 1;
 
 -- 13. Write a query to find customers who have purchased products with a price greater than 1000.
-SELECT c.customer_id, CONCAT(c.first_name, ' ' , c.last_name) AS full_name 
+SELECT CONCAT(c.first_name, ' ' , c.last_name) AS full_name 
 FROM "assignment".customers c 
 	JOIN "assignment".sales s
 		ON c.customer_id =s.customer_id 
-WHERE s.total_amount > 1000;		
+			JOIN "assignment".products p 
+				ON s.product_id = p.product_id
+WHERE p.price > 1000;		
 
 -- 14. Write a query to join the `Sales` and `Products` tables on product_id, and select the product name and total sales amount.
 SELECT p.product_name, SUM(s.total_amount) AS total_sales_amount
@@ -246,12 +248,11 @@ FROM "assignment".sales s
 GROUP BY c.first_name, c.last_name, p.product_name;				
 
 -- 17. Write a query to perform a self-join on the `Customers` table and find all pairs of customers who have the same membership status.
-SELECT CONCAT(c.first_name, ' ' , c.last_name) AS full_name, s.membership_status  
+SELECT CONCAT(c.first_name, ' ' , c.last_name) AS full_name_c, CONCAT(s.first_name, ' ' , s.last_name) AS full_name_s, s.membership_status  
 FROM "assignment".customers c
 	JOIN "assignment".customers s
-		ON c.customer_id = s.customer_id 
-WHERE c.membership_status = s.membership_status 		
-GROUP BY s.membership_status, c.first_name, c.last_name; 
+		ON c.membership_status = s.membership_status  
+WHERE c.customer_id < s.customer_id; 
 
 -- 18. Write a query to join the `Sales` and `Products` tables, and calculate the total number of sales for each product.
 SELECT p.product_name, COUNT(s.sale_id) AS total_sales
@@ -279,7 +280,6 @@ FROM "assignment".customers c
 			JOIN "assignment".products p 
 				ON p.product_id = s.product_id 
 WHERE p.category = 'Electronics' OR p.category = 'Appliances'
-	AND p.product_id = s.product_id
 GROUP BY  p.category, c.first_name, c.last_name; 
 
 -- 22. Write a query to calculate the total sales amount per product and group the result by product name.
@@ -294,7 +294,7 @@ SELECT CONCAT(c.first_name, ' ' , c.last_name) AS full_name
 FROM "assignment".customers c 
 	JOIN "assignment".sales s 
 		ON c.customer_id = s.customer_id 
-WHERE EXTRACT(YEAR FROM s.sale_date) = 2024;
+WHERE EXTRACT(YEAR FROM s.sale_date) = 2023;
 
 -- 24. Write a query to find the customers with the highest total sales in 2023.
 SELECT CONCAT(c.first_name, ' ' , c.last_name) AS full_name, SUM(s.total_amount ) AS total_sales
