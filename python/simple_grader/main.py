@@ -14,13 +14,14 @@ def grade():
         # Initialize an list for makrs
         marks = [mark1, mark2, mark3]
 
-        # Iniitalize empty dictionary for grades
+        # Iniitalize empty dictionary and keys for grades
         grades = {}
         grades['name'] = name
         grades['marks'] = marks
         grades['avg'] = avg
         grades['grade'] = grade
 
+        # Grading logic
         for value in grades.values():
             if avg >= 70:
                 grades['grade'] = 'A'
@@ -35,16 +36,18 @@ def grade():
             else:
                 grades['grade'] = 'Fail' 
 
-        print(grades)
+        # Confirm the dictionary is populated
+        print("\nGrades: ", grades)
         print('-' * 20)
 
+        # Write to file using csv module
         with open("grades.csv", "a", newline="") as file:
             write = csv.writer(file)
             for key, value in grades.items():
                 write.writerow([key,value])
-        print("File 'grades.csv' written successfully")
+        print("\nFile 'grades.csv' written successfully")
 
-        choice = input("Do you wish to continue? (y/n): ")
+        choice = input("\n\nDo you wish to continue? (y/n): ")
         if choice == 'no' or choice == 'n':
             print("Exiting grader...")
             break
