@@ -40,7 +40,7 @@ def grade():
         print("\nGrades: ", grades)
         print('-' * 20)
 
-        # Write to file using csv module
+        # Write to file using csv module('with' automatically opens and closes the file)
         with open("grades.csv", "a", newline="") as file:
             write = csv.writer(file)
             for key, value in grades.items():
