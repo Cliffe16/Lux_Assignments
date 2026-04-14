@@ -2,3 +2,7 @@ name,John Doe
 marks,"[45.0, 63.0, 44.0]"
 avg,50.666666666666664
 grade,C
+name,Cliffe Okoth
+marks,"[45.0, 68.0, 89.0]"
+avg,67.33333333333333
+grade,B

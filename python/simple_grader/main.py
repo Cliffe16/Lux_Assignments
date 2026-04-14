@@ -38,7 +38,7 @@ def grade():
         print(grades)
         print('-' * 20)
 
-        with open("grades.csv", "w", newline="") as file:
+        with open("grades.csv", "a", newline="") as file:
             write = csv.writer(file)
             for key, value in grades.items():
                 write.writerow([key,value])
