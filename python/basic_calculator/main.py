@@ -1,4 +1,5 @@
 def calculator():
+    print("Welcome to Basic Calculator!")
     # Initialize the while loop to iterate over the inputs
     while True:
         try:
