@@ -1,14 +1,14 @@
 import csv
 
 def store_creds():
-    # Initialize empty credentials dictionary outside the loop
-    credentials = {}
-
     # Iterate over inputs
     while True:
         website = input("Enter website: ")
         username = input("Enter username: ")
         password = input("Enter password: ")
+    
+        # Create credentials dictionary 
+        credentials = {}
 
         # Define dictionary keys
         credentials['website'] = website
@@ -21,7 +21,8 @@ def store_creds():
         # Store credentials in a csv file
         with open("credentials.csv", "a", newline="") as file:
             write = csv.writer(file)
-            write.writerow(credentials.values())
+            for key, value in credentials.items():
+                write.writerow([key, value])
         print("File 'credentials.csv' written successfully")
 
         try:
@@ -32,7 +33,7 @@ def store_creds():
 
             # List all websites
             web_choice = input("\nWould you like to see all websites stored? (y/n): ")
-            if web_choice == 'yes' or web_choice == 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'y':
+            if web_choice == 'yes' or 'y':
                 print(credentials['website'])
 
             # Program termination
