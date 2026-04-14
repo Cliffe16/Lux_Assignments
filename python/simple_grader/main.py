@@ -43,8 +43,7 @@ def grade():
         # Write to file using csv module('with' automatically opens and closes the file)
         with open("grades.csv", "a", newline="") as file:
             write = csv.writer(file)
-            for key, value in grades.items():
-                write.writerow([key,value])
+            write.writerow(credentials.values())
         print("\nFile 'grades.csv' written successfully")
 
         choice = input("\n\nDo you wish to continue? (y/n): ")
