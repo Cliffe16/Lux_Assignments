@@ -2,6 +2,25 @@
 
 A simple, interactive command-line calculator written in Python. This program allows users to perform basic arithmetic operations continuously until they explicitly choose to exit.
 
+### Overview
+The app is a learning project from Lux Dev answering the following question:
+Write a Python program that acts as a basic calculator. Your program should:
+
+1. Define a function called calculator that takes three parameters: num1, num2, and operation.
+
+2. Perform addition, subtraction, multiplication, or division based on the operation parameter.
+
+3. Handle division by zero by returning "Error: Division by zero!".
+
+4. Return "Invalid operation" if the user enters an operation other than +, -, *, or /.
+
+5. Use a loop to keep asking the user for numbers and the operation until the user decides to stop.
+
+6. Print the result of each calculation.
+
+Hint: Use if, elif, and else statements in your function.
+
+
 ## Features
 
 * **Basic Arithmetic:** Supports addition (`+`), subtraction (`-`), multiplication (`*`) and division (`/`).
