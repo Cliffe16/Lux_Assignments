@@ -2,9 +2,9 @@ from extract import extract_news
 from transform import transform_news
 from load import load_news
 
-def main()
+def main():
     articles = extract_news()
-    transformed_data = transform_news()
+    transformed_data = transform_news(articles)
 
     print("Extracting articles...")
     extract_news()

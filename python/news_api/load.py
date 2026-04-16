@@ -1,10 +1,10 @@
 import pandas as pd
-from sqlalachemy import create_engine
+from sqlalchemy import create_engine
+import psycopg2
 from config import DB_USER, DB_PASS, DB
 
 #Initialize db conncetion engine
-engine = create_engine("postgresql+psycopg2://{DB_USER}:{DB_PASS}@localhost:5432/{DB}
-    ")
+engine = create_engine("postgresql+psycopg2://{DB_USER}:{DB_PASS}@localhost:5432/{DB}")
 
 def load_news(transformed_data):
     # Skip if no data is returned
