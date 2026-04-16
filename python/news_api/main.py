@@ -12,11 +12,11 @@ def main():
     print("--------------------------------------")
     
     print("Transforming data")
-    transform_news()
+    transform_news(articles)
     print("Data transformed successfully\n", transformed_data)
 
     print("Loading Data...")
-    load_news()
+    load_news(transformed_data)
 
 if __name__ == "__main__":
     main()

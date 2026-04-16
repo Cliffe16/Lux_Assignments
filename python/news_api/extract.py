@@ -7,7 +7,7 @@ def extract_news():
     url = "https://newsapi.org/v2/everything"
     params = {
         'q': 'Iran',
-        'apiKey': {'API_KEY'},
+        'apiKey': NEWS_API_KEY,
         'from': '2026-04-15',
         'sortBy': 'popularity'
     }
