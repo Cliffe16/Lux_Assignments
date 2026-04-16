@@ -1,6 +1,6 @@
 from datetime import datetime
 
-def transform_news(articles):
+def transform_news(articles):    
     # Initialze an empty list for the transfomred data
     transformed_data = []
 

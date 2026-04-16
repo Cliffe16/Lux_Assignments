@@ -14,7 +14,7 @@ def extract_news():
     
     try:
         # Send request to url
-        response = requests.get(url, params=params)
+        response = requests.get(url, params=params, timeout=10)
         # Raise error if request failes
         response.raise_for_status()
 
